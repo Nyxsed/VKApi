@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">VKApi</string>
+    <string name="lorem">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</string>
 </resources>
