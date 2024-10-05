@@ -1,4 +1,4 @@
-package ru.simakover.vkapi.ui
+package ru.simakover.vkapi.presentation.ui.elements
 
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
@@ -28,7 +28,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ru.simakover.vkapi.R
-import ru.simakover.vkapi.ui.theme.VKApiTheme
+import ru.simakover.vkapi.presentation.ui.theme.VKApiTheme
 
 @Composable
 fun PostCard() {

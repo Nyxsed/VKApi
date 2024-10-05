@@ -1,4 +1,4 @@
-package ru.simakover.vkapi.ui.theme
+package ru.simakover.vkapi.presentation.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
