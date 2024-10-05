@@ -1,76 +1,44 @@
 package ru.simakover.vkapi.presentation.ui.elements
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material3.FloatingActionButton
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
-import kotlinx.coroutines.launch
-import ru.simakover.vkapi.presentation.ui.theme.VKApiTheme
+import androidx.compose.ui.unit.dp
+import ru.simakover.vkapi.domain.PostItem
+import ru.simakover.vkapi.presentation.MainViewModel
 
 @Composable
-fun MainScreen() {
-
-    val snackbarHostState = remember { SnackbarHostState() }
-    val fabIsVisible = remember { mutableStateOf(true) }
-    val scope = rememberCoroutineScope()
+fun MainScreen(
+    viewModel: MainViewModel,
+) {
+    val post = viewModel.postItem.observeAsState(PostItem())
 
     Scaffold(
         bottomBar = {
             MainNavBar()
         },
-        floatingActionButton = {
-            if (fabIsVisible.value) {
-                MainFab {
-                    scope.launch {
-                        val action = snackbarHostState.showSnackbar(
-                            message = "This is snackbar",
-                            actionLabel = "Hide FAB",
-                            duration = SnackbarDuration.Long,
-                        )
-                        if (action == SnackbarResult.ActionPerformed) {
-                            fabIsVisible.value = false
-                        }
-                    }
-                }
-            }
-        },
-        snackbarHost = {
-            SnackbarHost(hostState = snackbarHostState)
-        }
     ) { paddings ->
-
-    }
-}
-
-
-@Composable
-fun MainFab(
-    onFabClicked: () -> Unit,
-
-) {
-    FloatingActionButton(
-        modifier = Modifier,
-        onClick = {
-            onFabClicked()
-        }) {
-        Icon(imageVector = Icons.Filled.Favorite, contentDescription = null)
+        PostCard(
+            modifier = Modifier
+                .padding(8.dp),
+            post = post.value,
+            //reference, same as viewModel.updateCount(it)
+            onLikeClickListener = viewModel::updateCount,
+            onShareClickListener = viewModel::updateCount,
+            onViewsClickListener = viewModel::updateCount,
+            onCommentClickListener = viewModel::updateCount,
+        )
     }
 }
 
@@ -104,10 +72,10 @@ fun MainNavBar() {
     }
 }
 
-@Preview
-@Composable
-private fun MainScreenPreview() {
-    VKApiTheme {
-        MainScreen()
-    }
-}
+//@Preview
+//@Composable
+//private fun MainScreenPreview() {
+//    VKApiTheme {
+//        MainScreen()
+//    }
+//}
