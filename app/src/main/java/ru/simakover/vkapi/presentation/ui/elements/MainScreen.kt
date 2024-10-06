@@ -8,12 +8,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import ru.simakover.vkapi.navigation.AppNavGraph
+import ru.simakover.vkapi.navigation.NavigationState
+import ru.simakover.vkapi.navigation.Screen
+import ru.simakover.vkapi.navigation.rememberNavigationState
 import ru.simakover.vkapi.presentation.MainViewModel
 
 
@@ -21,8 +25,9 @@ import ru.simakover.vkapi.presentation.MainViewModel
 fun MainScreen(
     viewModel: MainViewModel,
 ) {
-    val navHostController = rememberNavController()
-    val navBackStackEntry by navHostController.currentBackStackEntryAsState()
+    //Self made!!
+    val navigationState = rememberNavigationState()
+    val navBackStackEntry by navigationState.navHostController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
     Scaffold(
@@ -30,13 +35,13 @@ fun MainScreen(
             MainNavBar(
                 currentRoute = currentRoute,
                 navItemOnClickListener = {
-                    navHostController.navigate(it.screen.route)
+                    navigationState.navigateTo(it.screen.route)
                 }
             )
         },
     ) { paddings ->
         AppNavGraph(
-            navHostController = navHostController,
+            navHostController = navigationState.navHostController,
             homeScreenContent = {
                 HomeScreen(
                     viewModel = viewModel,
@@ -58,7 +63,7 @@ fun MainScreen(
 fun TextCounter(
     name:String
 ) {
-    var count by remember { mutableStateOf(0) }
+    var count by rememberSaveable { mutableStateOf(0) }
 
     Text(
         modifier = Modifier.clickable { count++ },
