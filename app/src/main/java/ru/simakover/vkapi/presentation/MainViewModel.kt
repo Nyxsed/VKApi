@@ -17,7 +17,7 @@ class MainViewModel : ViewModel() {
     private val _postList = MutableLiveData<List<PostItem>>(initialList)
     val postList: LiveData<List<PostItem>> = _postList
 
-    fun updateCount(post : PostItem, item: StatisticItem) {
+    fun updateCount(post: PostItem, item: StatisticItem) {
         val oldPosts = postList.value?.toMutableList() ?: mutableListOf()
 
         val oldStatistics = post.statistics ?: throw IllegalStateException()
@@ -33,8 +33,8 @@ class MainViewModel : ViewModel() {
 
         val updatedPost = post.copy(statistics = newStatistics)
         _postList.value = oldPosts.apply {
-            replaceAll {oldPost ->
-                if(oldPost.id == updatedPost.id) {
+            replaceAll { oldPost ->
+                if (oldPost.id == updatedPost.id) {
                     updatedPost
                 } else {
                     oldPost
