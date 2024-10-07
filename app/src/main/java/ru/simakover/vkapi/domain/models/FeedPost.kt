@@ -2,7 +2,7 @@ package ru.simakover.vkapi.domain.models
 
 import ru.simakover.vkapi.R
 
-data class PostItem(
+data class FeedPost(
     val id: Int = 0,
     val communityName: String = "/dev/null",
     val publicationDate: String = "14:00",

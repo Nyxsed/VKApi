@@ -1,6 +1,5 @@
-package ru.simakover.vkapi.presentation.ui.screens
+package ru.simakover.vkapi.presentation.ui.screens.home
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -22,42 +21,32 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import ru.simakover.vkapi.domain.models.PostItem
+import androidx.lifecycle.viewmodel.compose.viewModel
+import ru.simakover.vkapi.domain.models.FeedPost
 import ru.simakover.vkapi.presentation.ui.elements.PostCard
-import ru.simakover.vkapi.presentation.viewmodels.MainViewModel
+import ru.simakover.vkapi.presentation.viewmodels.NewsFeedViewModel
 
 
 @Composable
 fun HomeScreen(
-    viewModel: MainViewModel,
     modifier: Modifier = Modifier,
+    onCommentClickListener:(FeedPost) -> Unit,
 ) {
-    val screenState = viewModel.screenState.observeAsState(HomeScreenState.Initial)
+    val viewModel: NewsFeedViewModel = viewModel()
+
+    val screenState = viewModel.screenState.observeAsState(NewsFeedScreenState.Initial)
     val currentState = screenState.value
 
     when (currentState) {
-        is HomeScreenState.Posts -> {
-            Posts(
+        is NewsFeedScreenState.Posts -> {
+            FeedPosts(
                 posts = currentState.posts,
                 modifier = modifier,
-                viewModel = viewModel
+                viewModel = viewModel,
+                onCommentClickListener = onCommentClickListener
             )
         }
-
-        is HomeScreenState.Comments -> {
-            CommentsScreen(
-                post = currentState.post,
-                comments = currentState.comments,
-                onBackPressed = {
-                    viewModel.closeComments()
-                }
-            )
-            BackHandler {
-                viewModel.closeComments()
-            }
-        }
-
-        HomeScreenState.Initial -> {
+        NewsFeedScreenState.Initial -> {
 
         }
     }
@@ -65,10 +54,11 @@ fun HomeScreen(
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
-fun Posts(
-    posts: List<PostItem>,
+fun FeedPosts(
+    posts: List<FeedPost>,
     modifier: Modifier,
-    viewModel: MainViewModel,
+    viewModel: NewsFeedViewModel,
+    onCommentClickListener:(FeedPost) -> Unit,
 ) {
     LazyColumn(
         modifier = modifier,
@@ -117,24 +107,24 @@ fun Posts(
                     post = post,
                     onLikeClickListener = { statisticItem ->
                         viewModel.updateCount(
-                            post = post,
+                            feedPost = post,
                             item = statisticItem
                         )
                     },
                     onShareClickListener = { statisticItem ->
                         viewModel.updateCount(
-                            post = post,
+                            feedPost = post,
                             item = statisticItem
                         )
                     },
                     onViewsClickListener = { statisticItem ->
                         viewModel.updateCount(
-                            post = post,
+                            feedPost = post,
                             item = statisticItem
                         )
                     },
                     onCommentClickListener = { statisticItem ->
-                        viewModel.showComments(post)
+                        onCommentClickListener(post)
                     },
                 )
             }

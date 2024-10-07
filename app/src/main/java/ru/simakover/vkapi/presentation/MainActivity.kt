@@ -6,20 +6,16 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import ru.simakover.vkapi.presentation.ui.screens.MainScreen
 import ru.simakover.vkapi.presentation.ui.theme.VKApiTheme
-import ru.simakover.vkapi.presentation.viewmodels.MainViewModel
+import ru.simakover.vkapi.presentation.viewmodels.NewsFeedViewModel
 
 class MainActivity : ComponentActivity() {
-
-    private val viewModel by viewModels<MainViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContent {
             VKApiTheme {
-                MainScreen(
-                    viewModel = viewModel
-                )
+                MainScreen()
             }
         }
     }

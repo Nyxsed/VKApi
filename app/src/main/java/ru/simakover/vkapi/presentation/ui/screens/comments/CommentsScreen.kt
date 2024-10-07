@@ -1,4 +1,4 @@
-package ru.simakover.vkapi.presentation.ui.screens
+package ru.simakover.vkapi.presentation.ui.screens.comments
 
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
@@ -24,51 +24,58 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.simakover.vkapi.domain.models.PostComment
-import ru.simakover.vkapi.domain.models.PostItem
 import ru.simakover.vkapi.presentation.ui.theme.VKApiTheme
+import ru.simakover.vkapi.presentation.viewmodels.CommentsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CommentsScreen(
-    post: PostItem,
-    comments: List<PostComment>,
     onBackPressed: () -> Unit,
 ) {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(text = "Comments for Post Id:${post.id} ")
-                },
-                navigationIcon = {
-                    IconButton(onClick = {
-                        onBackPressed()
-                    }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = null
-                        )
+
+    val viewModel: CommentsViewModel = viewModel()
+    val screenState = viewModel.screenState.observeAsState(CommentsScreenState.Initial)
+    val currentState = screenState.value
+
+    if (currentState is CommentsScreenState.Comments) {
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = {
+                        Text(text = "Comments for Post Id:${currentState.feedPost.id} ")
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = {
+                            onBackPressed()
+                        }) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = null
+                            )
+                        }
                     }
-                }
-            )
-        }
-    ) { paddings ->
-        LazyColumn(
-            modifier = Modifier
-                .padding(paddings)
-                .padding(bottom = 72.dp)
-        ) {
-            items(
-                items = comments,
-                key = { it.id }
+                )
+            }
+        ) { paddings ->
+            LazyColumn(
+                modifier = Modifier
+                    .padding(paddings)
+                    .padding(bottom = 72.dp)
             ) {
-                CommentItem(comment = it)
+                items(
+                    items = currentState.postComments,
+                    key = { it.id }
+                ) {
+                    CommentItem(postComment = it)
+                }
             }
         }
     }
@@ -76,7 +83,7 @@ fun CommentsScreen(
 
 @Composable
 fun CommentItem(
-    comment: PostComment,
+    postComment: PostComment,
 ) {
     Row(
         modifier = Modifier
@@ -86,25 +93,25 @@ fun CommentItem(
         Image(
             modifier = Modifier
                 .size(24.dp),
-            painter = (painterResource(id = comment.authorAvatarId)),
+            painter = (painterResource(id = postComment.authorAvatarId)),
             contentDescription = null
         )
         Spacer(modifier = Modifier.width(8.dp))
         Column {
             Text(
-                text = "${comment.authorName} id: ${comment.id}",
+                text = "${postComment.authorName} id: ${postComment.id}",
                 color = MaterialTheme.colorScheme.onPrimary,
                 fontSize = 12.sp
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = "${comment.commentText}",
+                text = "${postComment.commentText}",
                 color = MaterialTheme.colorScheme.onPrimary,
                 fontSize = 14.sp
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = "${comment.publicationDate}",
+                text = "${postComment.publicationDate}",
                 color = MaterialTheme.colorScheme.onSecondary,
                 fontSize = 12.sp
             )
@@ -125,7 +132,7 @@ fun CommentItem(
 private fun CommentItemPreview() {
     VKApiTheme {
         Box(modifier = Modifier.background(MaterialTheme.colorScheme.background).fillMaxWidth()) {
-            CommentItem(comment = PostComment(id = 0))
+            CommentItem(postComment = PostComment(id = 0))
         }
     }
 }

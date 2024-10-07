@@ -27,14 +27,14 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import ru.simakover.vkapi.R
-import ru.simakover.vkapi.domain.models.PostItem
+import ru.simakover.vkapi.domain.models.FeedPost
 import ru.simakover.vkapi.domain.models.StatisticItem
 import ru.simakover.vkapi.domain.models.StatisticType
 
 @Composable
 fun PostCard(
     modifier: Modifier = Modifier,
-    post: PostItem,
+    post: FeedPost,
     onLikeClickListener: (StatisticItem) -> Unit,
     onShareClickListener: (StatisticItem) -> Unit,
     onViewsClickListener: (StatisticItem) -> Unit,
@@ -69,7 +69,7 @@ fun PostCard(
 
 @Composable
 private fun PostHeader(
-    post: PostItem,
+    post: FeedPost,
 ) {
     Row(
         modifier = Modifier
