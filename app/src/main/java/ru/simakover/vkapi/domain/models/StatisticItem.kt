@@ -1,4 +1,4 @@
-package ru.simakover.vkapi.domain
+package ru.simakover.vkapi.domain.models
 
 data class StatisticItem(
     val type: StatisticType,

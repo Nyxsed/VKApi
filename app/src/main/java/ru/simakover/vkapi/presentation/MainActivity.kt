@@ -4,8 +4,9 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import ru.simakover.vkapi.presentation.ui.elements.MainScreen
+import ru.simakover.vkapi.presentation.ui.screens.MainScreen
 import ru.simakover.vkapi.presentation.ui.theme.VKApiTheme
+import ru.simakover.vkapi.presentation.viewmodels.MainViewModel
 
 class MainActivity : ComponentActivity() {
 

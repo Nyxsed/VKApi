@@ -1,4 +1,4 @@
-package ru.simakover.vkapi.domain
+package ru.simakover.vkapi.domain.models
 
 import ru.simakover.vkapi.R
 

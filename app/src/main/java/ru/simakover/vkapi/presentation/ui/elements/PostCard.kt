@@ -27,9 +27,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import ru.simakover.vkapi.R
-import ru.simakover.vkapi.domain.PostItem
-import ru.simakover.vkapi.domain.StatisticItem
-import ru.simakover.vkapi.domain.StatisticType
+import ru.simakover.vkapi.domain.models.PostItem
+import ru.simakover.vkapi.domain.models.StatisticItem
+import ru.simakover.vkapi.domain.models.StatisticType
 
 @Composable
 fun PostCard(

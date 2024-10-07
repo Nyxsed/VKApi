@@ -1,4 +1,4 @@
-package ru.simakover.vkapi.presentation.ui.elements
+package ru.simakover.vkapi.presentation.models
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountCircle

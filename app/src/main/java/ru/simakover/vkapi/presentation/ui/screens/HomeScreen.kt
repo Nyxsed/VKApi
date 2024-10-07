@@ -1,5 +1,6 @@
-package ru.simakover.vkapi.presentation.ui.elements
+package ru.simakover.vkapi.presentation.ui.screens
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -21,16 +22,54 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import ru.simakover.vkapi.presentation.MainViewModel
+import ru.simakover.vkapi.domain.models.PostItem
+import ru.simakover.vkapi.presentation.ui.elements.PostCard
+import ru.simakover.vkapi.presentation.viewmodels.MainViewModel
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+
 @Composable
 fun HomeScreen(
     viewModel: MainViewModel,
     modifier: Modifier = Modifier,
 ) {
-    val postList = viewModel.postList.observeAsState(listOf())
+    val screenState = viewModel.screenState.observeAsState(HomeScreenState.Initial)
+    val currentState = screenState.value
 
+    when (currentState) {
+        is HomeScreenState.Posts -> {
+            Posts(
+                posts = currentState.posts,
+                modifier = modifier,
+                viewModel = viewModel
+            )
+        }
+
+        is HomeScreenState.Comments -> {
+            CommentsScreen(
+                post = currentState.post,
+                comments = currentState.comments,
+                onBackPressed = {
+                    viewModel.closeComments()
+                }
+            )
+            BackHandler {
+                viewModel.closeComments()
+            }
+        }
+
+        HomeScreenState.Initial -> {
+
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@Composable
+fun Posts(
+    posts: List<PostItem>,
+    modifier: Modifier,
+    viewModel: MainViewModel,
+) {
     LazyColumn(
         modifier = modifier,
         contentPadding = PaddingValues(
@@ -41,7 +80,7 @@ fun HomeScreen(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(
-            items = postList.value,
+            items = posts,
             key = { it.id }
         ) { post ->
             val dismissBoxState = rememberSwipeToDismissBoxState(
@@ -95,10 +134,7 @@ fun HomeScreen(
                         )
                     },
                     onCommentClickListener = { statisticItem ->
-                        viewModel.updateCount(
-                            post = post,
-                            item = statisticItem
-                        )
+                        viewModel.showComments(post)
                     },
                 )
             }
