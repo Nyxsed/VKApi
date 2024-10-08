@@ -7,16 +7,19 @@ import ru.simakover.vkapi.domain.models.FeedPost
 import ru.simakover.vkapi.domain.models.PostComment
 import ru.simakover.vkapi.presentation.ui.screens.comments.CommentsScreenState
 
-class CommentsViewModel: ViewModel() {
+class CommentsViewModel(
+    feedPost: FeedPost,
+): ViewModel()
+ {
 
     private val _screenState =  MutableLiveData<CommentsScreenState>(CommentsScreenState.Initial)
     val screenState: LiveData<CommentsScreenState> = _screenState
 
     init {
-        loadComments(FeedPost())
+        loadComments(feedPost)
     }
 
-    fun loadComments(feedPost: FeedPost) {
+    private fun loadComments(feedPost: FeedPost) {
         val comments = mutableListOf<PostComment>().apply {
             repeat(10) {
                 add(element = PostComment(id = it))

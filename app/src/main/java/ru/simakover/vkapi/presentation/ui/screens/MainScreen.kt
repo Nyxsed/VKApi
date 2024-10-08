@@ -59,7 +59,8 @@ fun MainScreen() {
                     CommentsScreen(
                         onBackPressed = {
                             commentsToPost.value = null
-                        }
+                        },
+                        feedPost = commentsToPost.value!!
                     )
                 }
             },
