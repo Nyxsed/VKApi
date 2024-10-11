@@ -1,16 +1,18 @@
 package ru.simakover.vkapi.presentation
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
-import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.vk.api.sdk.VK
-import com.vk.api.sdk.auth.VKAuthenticationResult
 import com.vk.api.sdk.auth.VKScope
-import ru.simakover.vkapi.ActivityResultTest
+import ru.simakover.vkapi.presentation.ui.screens.MainScreen
+import ru.simakover.vkapi.presentation.ui.screens.login.AuthState
+import ru.simakover.vkapi.presentation.ui.screens.login.LoginScreen
 import ru.simakover.vkapi.presentation.ui.theme.VKApiTheme
+import ru.simakover.vkapi.presentation.viewmodels.MainViewModel
 
 class MainActivity : ComponentActivity() {
 
@@ -19,23 +21,29 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             VKApiTheme {
+                val viewModel: MainViewModel = viewModel()
+                val authState = viewModel.authState.observeAsState(AuthState.Initial)
 
-                val launcher = rememberLauncherForActivityResult(contract =VK.getVKAuthActivityResultContract()) {
-                    when (it) {
-                        is VKAuthenticationResult.Success -> {
-                            Log.d("MainActivity", "successful authentication")
-                        }
+                val launcher = rememberLauncherForActivityResult(
+                    contract = VK.getVKAuthActivityResultContract()
+                ) {
+                    viewModel.performAuthResult(it)
+                }
 
-                        is VKAuthenticationResult.Failed -> {
-                            Log.d("MainActivity", "failed authentication")
-                        }
+                when (authState.value) {
+                    is AuthState.Authorized -> {
+                        MainScreen()
                     }
+
+                    AuthState.NotAuthorized ->
+                        LoginScreen(
+                            onLoginClick = {
+                                launcher.launch(listOf(VKScope.WALL))
+                            }
+                        )
+
+                    AuthState.Initial -> {}
                 }
-                SideEffect {
-                    launcher.launch(listOf(VKScope.WALL))
-                }
-//                MainScreen()
-                ActivityResultTest()
             }
         }
     }
