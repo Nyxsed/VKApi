@@ -1,4 +1,4 @@
-package ru.simakover.vkapi.presentation.ui.screens.comments
+package ru.simakover.vkapi.presentation.screens.comments
 
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
@@ -34,8 +34,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.simakover.vkapi.domain.models.FeedPost
 import ru.simakover.vkapi.domain.models.PostComment
 import ru.simakover.vkapi.presentation.ui.theme.VKApiTheme
-import ru.simakover.vkapi.presentation.viewmodels.CommentsViewModel
-import ru.simakover.vkapi.presentation.viewmodels.CommentsViewModelFactory
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

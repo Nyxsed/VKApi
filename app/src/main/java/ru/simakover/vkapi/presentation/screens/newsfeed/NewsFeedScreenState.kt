@@ -1,4 +1,4 @@
-package ru.simakover.vkapi.presentation.ui.screens.home
+package ru.simakover.vkapi.presentation.screens.newsfeed
 
 import ru.simakover.vkapi.domain.models.FeedPost
 

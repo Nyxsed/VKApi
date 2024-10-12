@@ -1,4 +1,4 @@
-package ru.simakover.vkapi.presentation.ui.screens.login
+package ru.simakover.vkapi.presentation.screens.main
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement

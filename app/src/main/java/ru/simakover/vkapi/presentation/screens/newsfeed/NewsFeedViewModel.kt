@@ -1,11 +1,10 @@
-package ru.simakover.vkapi.presentation.viewmodels
+package ru.simakover.vkapi.presentation.screens.newsfeed
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import ru.simakover.vkapi.domain.models.FeedPost
 import ru.simakover.vkapi.domain.models.StatisticItem
-import ru.simakover.vkapi.presentation.ui.screens.home.NewsFeedScreenState
 
 class NewsFeedViewModel : ViewModel() {
 

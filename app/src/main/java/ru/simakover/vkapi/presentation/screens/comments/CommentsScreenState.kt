@@ -1,4 +1,4 @@
-package ru.simakover.vkapi.presentation.ui.screens.comments
+package ru.simakover.vkapi.presentation.screens.comments
 
 import ru.simakover.vkapi.domain.models.FeedPost
 import ru.simakover.vkapi.domain.models.PostComment

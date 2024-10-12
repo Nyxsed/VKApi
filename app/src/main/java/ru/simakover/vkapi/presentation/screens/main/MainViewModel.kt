@@ -1,11 +1,10 @@
-package ru.simakover.vkapi.presentation.viewmodels
+package ru.simakover.vkapi.presentation.screens.main
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.vk.api.sdk.VK
 import com.vk.api.sdk.auth.VKAuthenticationResult
-import ru.simakover.vkapi.presentation.ui.screens.login.AuthState
 
 class MainViewModel : ViewModel() {
 

@@ -1,4 +1,4 @@
-package ru.simakover.vkapi.presentation.ui.screens.home
+package ru.simakover.vkapi.presentation.screens.newsfeed
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -23,12 +23,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ru.simakover.vkapi.domain.models.FeedPost
-import ru.simakover.vkapi.presentation.ui.elements.PostCard
-import ru.simakover.vkapi.presentation.viewmodels.NewsFeedViewModel
 
 
 @Composable
-fun HomeScreen(
+fun NewsFeedScreen(
     modifier: Modifier = Modifier,
     onCommentClickListener:(FeedPost) -> Unit,
 ) {

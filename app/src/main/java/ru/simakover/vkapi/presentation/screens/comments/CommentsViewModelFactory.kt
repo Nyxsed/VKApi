@@ -1,4 +1,4 @@
-package ru.simakover.vkapi.presentation.viewmodels
+package ru.simakover.vkapi.presentation.screens.comments
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

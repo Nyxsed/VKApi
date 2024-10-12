@@ -1,4 +1,4 @@
-package ru.simakover.vkapi.presentation.ui.elements
+package ru.simakover.vkapi.presentation.screens.newsfeed
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable

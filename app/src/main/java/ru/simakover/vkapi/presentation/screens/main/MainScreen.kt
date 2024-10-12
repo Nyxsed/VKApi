@@ -1,4 +1,4 @@
-package ru.simakover.vkapi.presentation.ui.screens
+package ru.simakover.vkapi.presentation.screens.main
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
@@ -21,9 +21,8 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
 import ru.simakover.vkapi.navigation.AppNavGraph
 import ru.simakover.vkapi.navigation.rememberNavigationState
-import ru.simakover.vkapi.presentation.models.NavigationItem
-import ru.simakover.vkapi.presentation.ui.screens.comments.CommentsScreen
-import ru.simakover.vkapi.presentation.ui.screens.home.HomeScreen
+import ru.simakover.vkapi.presentation.screens.comments.CommentsScreen
+import ru.simakover.vkapi.presentation.screens.newsfeed.NewsFeedScreen
 
 
 @Composable
@@ -73,7 +72,7 @@ fun MainScreen() {
         AppNavGraph(
             navHostController = navigationState.navHostController,
             newsFeedScreenContent = {
-                HomeScreen(
+                NewsFeedScreen(
                     modifier = Modifier
                         .padding(paddings),
                     onCommentClickListener = { feedPost ->

@@ -1,4 +1,4 @@
-package ru.simakover.vkapi.presentation
+package ru.simakover.vkapi.presentation.screens.main
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -8,11 +8,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.vk.api.sdk.VK
 import com.vk.api.sdk.auth.VKScope
-import ru.simakover.vkapi.presentation.ui.screens.MainScreen
-import ru.simakover.vkapi.presentation.ui.screens.login.AuthState
-import ru.simakover.vkapi.presentation.ui.screens.login.LoginScreen
 import ru.simakover.vkapi.presentation.ui.theme.VKApiTheme
-import ru.simakover.vkapi.presentation.viewmodels.MainViewModel
 
 class MainActivity : ComponentActivity() {
 
