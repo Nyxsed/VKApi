@@ -71,4 +71,7 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.android.sdk.core)
     implementation(libs.android.sdk.api)
+//    implementation(libs.retrofit)
+    implementation(libs.logging.interceptor)
+    implementation(libs.converter.gson)
 }
