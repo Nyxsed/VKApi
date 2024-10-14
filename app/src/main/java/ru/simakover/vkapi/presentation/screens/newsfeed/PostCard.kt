@@ -22,14 +22,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import ru.simakover.vkapi.R
 import ru.simakover.vkapi.domain.models.FeedPost
 import ru.simakover.vkapi.domain.models.StatisticItem
 import ru.simakover.vkapi.domain.models.StatisticType
+import ru.simakover.vkapi.presentation.ui.theme.likedHeart
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @Composable
 fun PostCard(
@@ -62,6 +68,7 @@ fun PostCard(
                 onShareClickListener = onShareClickListener,
                 onViewsClickListener = onViewsClickListener,
                 onCommentClickListener = onCommentClickListener,
+                isLiked = post.isLiked
             )
         }
     }
@@ -97,7 +104,7 @@ private fun PostHeader(
                 color = MaterialTheme.colorScheme.onPrimary
             )
             Text(
-                text = post.publicationDate,
+                text = mapTimestampToDate(post.publicationDate),
                 color = MaterialTheme.colorScheme.onSecondary
             )
         }
@@ -119,6 +126,7 @@ private fun Statistics(
     onShareClickListener: (StatisticItem) -> Unit,
     onViewsClickListener: (StatisticItem) -> Unit,
     onCommentClickListener: (StatisticItem) -> Unit,
+    isLiked: Boolean,
 ) {
     Row(
         modifier = Modifier
@@ -139,8 +147,6 @@ private fun Statistics(
             )
         }
         Row(
-            modifier = Modifier
-                .weight(1f),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             val sharesItem = statistics.getItemByType(StatisticType.SHARES)
@@ -151,7 +157,7 @@ private fun Statistics(
                     onShareClickListener(sharesItem)
                 },
             )
-
+            Spacer(modifier = Modifier.width(12.dp))
             val commentItem = statistics.getItemByType(StatisticType.COMMENTS)
             IconWithText(
                 iconResId = R.drawable.ic_comment,
@@ -160,14 +166,15 @@ private fun Statistics(
                     onCommentClickListener(commentItem)
                 },
             )
-
+            Spacer(modifier = Modifier.width(12.dp))
             val likeItem = statistics.getItemByType(StatisticType.LIKES)
             IconWithText(
-                iconResId = R.drawable.ic_like,
+                iconResId = if (isLiked) R.drawable.ic_like_set else R.drawable.ic_like,
                 text = likeItem.count.toString(),
                 onItemClickListener = {
                     onLikeClickListener(likeItem)
                 },
+                tintForIcon = if (isLiked) likedHeart else MaterialTheme.colorScheme.onSecondary
             )
         }
     }
@@ -186,6 +193,7 @@ private fun IconWithText(
     text: String,
     onItemClickListener: () -> Unit,
     revers: Boolean = true,
+    tintForIcon: Color = MaterialTheme.colorScheme.onSecondary,
 ) {
     Row(
         modifier = Modifier
@@ -196,32 +204,65 @@ private fun IconWithText(
     ) {
         if (revers) {
             Text(
-                text = text,
+                modifier = Modifier
+                    .padding(end = 4.dp),
+                text = formatStatisticCount(text),
                 color = MaterialTheme.colorScheme.onSecondary
             )
             Icon(
                 modifier = Modifier
-                    .size(30.dp)
-                    .padding(start = 4.dp),
+                    .size(20.dp),
                 painter = painterResource(id = iconResId),
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSecondary,
+                tint = tintForIcon,
             )
         } else {
             Icon(
                 modifier = Modifier
-                    .size(30.dp),
+                    .size(20.dp)
+                    .padding(end = 4.dp),
                 painter = painterResource(id = iconResId),
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSecondary,
+                tint = tintForIcon,
             )
             Text(
-                modifier = Modifier
-                    .padding(start = 4.dp),
-                text = text,
+                text = formatStatisticCount(text),
                 color = MaterialTheme.colorScheme.onSecondary
             )
         }
-
     }
+}
+
+private fun mapTimestampToDate(timestamp: Long): String {
+    val data = Date(timestamp)
+    return SimpleDateFormat("d MMMM yyyy, hh:mm", Locale.getDefault()).format(data)
+}
+
+private fun formatStatisticCount(count: String): String {
+    val longCount = count.toLong()
+    return if (longCount > 100_000) {
+        String.format("%K", (longCount / 1000))
+    } else if (longCount > 1000) {
+        String.format("%.1fK", (longCount / 1000f))
+    } else {
+        longCount.toString()
+    }
+}
+
+@Preview
+@Composable
+private fun PostCardPreview() {
+    Statistics(
+        statistics = listOf(
+            StatisticItem(StatisticType.VIEWS,100000),
+            StatisticItem(StatisticType.SHARES,100000),
+            StatisticItem(StatisticType.COMMENTS,100000),
+            StatisticItem(StatisticType.LIKES,100000),
+        ),
+        onLikeClickListener = {},
+        onShareClickListener = {},
+        onViewsClickListener = {},
+        onCommentClickListener = {},
+        isLiked = true
+    )
 }
