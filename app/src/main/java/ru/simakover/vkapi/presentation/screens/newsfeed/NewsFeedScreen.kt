@@ -28,7 +28,7 @@ import ru.simakover.vkapi.domain.models.FeedPost
 @Composable
 fun NewsFeedScreen(
     modifier: Modifier = Modifier,
-    onCommentClickListener:(FeedPost) -> Unit,
+    onCommentClickListener: (FeedPost) -> Unit,
 ) {
     val viewModel: NewsFeedViewModel = viewModel()
 
@@ -44,6 +44,7 @@ fun NewsFeedScreen(
                 onCommentClickListener = onCommentClickListener
             )
         }
+
         NewsFeedScreenState.Initial -> {
 
         }
@@ -56,7 +57,7 @@ fun FeedPosts(
     posts: List<FeedPost>,
     modifier: Modifier,
     viewModel: NewsFeedViewModel,
-    onCommentClickListener:(FeedPost) -> Unit,
+    onCommentClickListener: (FeedPost) -> Unit,
 ) {
     LazyColumn(
         modifier = modifier,
@@ -103,11 +104,8 @@ fun FeedPosts(
             ) {
                 PostCard(
                     post = post,
-                    onLikeClickListener = { statisticItem ->
-                        viewModel.updateCount(
-                            feedPost = post,
-                            item = statisticItem
-                        )
+                    onLikeClickListener = {
+                        viewModel.changeLikeStatus(post = post)
                     },
                     onShareClickListener = { statisticItem ->
                         viewModel.updateCount(

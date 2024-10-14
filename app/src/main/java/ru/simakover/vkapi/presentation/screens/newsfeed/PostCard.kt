@@ -241,7 +241,7 @@ private fun mapTimestampToDate(timestamp: Long): String {
 private fun formatStatisticCount(count: String): String {
     val longCount = count.toLong()
     return if (longCount > 100_000) {
-        String.format("%K", (longCount / 1000))
+        String.format("%sK", (longCount / 1000))
     } else if (longCount > 1000) {
         String.format("%.1fK", (longCount / 1000f))
     } else {
