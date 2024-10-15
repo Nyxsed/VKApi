@@ -2,6 +2,7 @@ package ru.simakover.vkapi.data.network
 
 import retrofit2.http.GET
 import retrofit2.http.Query
+import ru.simakover.vkapi.data.model.commentsresponse.CommentsResponseDto
 import ru.simakover.vkapi.data.model.likescountresponse.LikesCountResponseDto
 import ru.simakover.vkapi.data.model.newsfeedresponse.NewsFeedResponseDto
 
@@ -38,4 +39,12 @@ interface ApiService {
         @Query("owner_id") ownerId: Long,
         @Query("item_id") postId: Long,
     )
+
+    @GET("wall.getComments?v=5.199&extended=1&fields=photo_100")
+    suspend fun loadComments(
+        @Query("access_token") token: String,
+        @Query("owner_id") ownerId: Long,
+        @Query("post_id") postId: Long,
+    ): CommentsResponseDto
+
 }

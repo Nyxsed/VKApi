@@ -1,12 +1,14 @@
 package ru.simakover.vkapi.data.mapper
 
+import ru.simakover.vkapi.data.model.commentsresponse.CommentsResponseDto
 import ru.simakover.vkapi.data.model.newsfeedresponse.NewsFeedResponseDto
 import ru.simakover.vkapi.domain.models.FeedPost
+import ru.simakover.vkapi.domain.models.PostComment
 import ru.simakover.vkapi.domain.models.StatisticItem
 import ru.simakover.vkapi.domain.models.StatisticType
 import kotlin.math.absoluteValue
 
-class NewsFeedMapper {
+class VkMapper {
 
     fun mapResponseToPosts(responseDto: NewsFeedResponseDto): List<FeedPost> {
         val result = mutableListOf<FeedPost>()
@@ -39,6 +41,34 @@ class NewsFeedMapper {
             )
 
             result.add(feedPost)
+        }
+
+        return result
+    }
+
+    fun mapResponseToComments(responseDto: CommentsResponseDto): List<PostComment> {
+        val result = mutableListOf<PostComment>()
+
+        val comments = responseDto.response.comments
+        val profiles = responseDto.response.profiles
+
+        for (comment in comments) {
+
+            val author = profiles.find {
+                it.id == comment.fromId
+            } ?: continue
+
+            if (comment.text.isBlank()) continue
+
+            val postComment = PostComment(
+                id = comment.id,
+                authorName = "${author.firstName} ${author.lastName}",
+                authorAvatarUrl = author.photo100,
+                commentText = comment.text,
+                publicationDate = comment.date * 1000
+            )
+
+            result.add(postComment)
         }
 
         return result

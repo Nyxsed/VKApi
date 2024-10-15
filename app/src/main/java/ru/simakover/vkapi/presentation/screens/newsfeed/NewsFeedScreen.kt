@@ -88,11 +88,11 @@ fun FeedPosts(
             key = { it.id }
         ) { post ->
             val threshold = 0.5f
-            lateinit var dismissBoxState: SwipeToDismissBoxState
+            var dismissBoxState: SwipeToDismissBoxState? = null
             dismissBoxState = rememberSwipeToDismissBoxState(
                 positionalThreshold = { it * threshold },
                 confirmValueChange = {
-                    if (it == SwipeToDismissBoxValue.EndToStart && dismissBoxState.progress > threshold) {
+                    if (it == SwipeToDismissBoxValue.EndToStart && (dismissBoxState?.progress ?: 0f) > threshold) {
                         viewModel.deletePost(post)
                         true
                     } else {

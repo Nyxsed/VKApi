@@ -32,9 +32,7 @@ import ru.simakover.vkapi.domain.models.FeedPost
 import ru.simakover.vkapi.domain.models.StatisticItem
 import ru.simakover.vkapi.domain.models.StatisticType
 import ru.simakover.vkapi.presentation.ui.theme.likedHeart
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import ru.simakover.vkapi.presentation.util.Util.mapTimestampToDate
 
 @Composable
 fun PostCard(
@@ -55,9 +53,10 @@ fun PostCard(
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight(),
+                placeholder = painterResource(id = R.drawable.ic_placeholder),
                 model = post.contentImageUrl,
                 contentDescription = null,
-                contentScale = ContentScale.FillWidth
+                contentScale = ContentScale.FillWidth,
             )
             Statistics(
                 statistics = post.statistics,
@@ -222,11 +221,6 @@ private fun IconWithText(
             )
         }
     }
-}
-
-private fun mapTimestampToDate(timestamp: Long): String {
-    val data = Date(timestamp)
-    return SimpleDateFormat("d MMMM yyyy, hh:mm", Locale.getDefault()).format(data)
 }
 
 private fun formatStatisticCount(count: String): String {

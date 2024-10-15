@@ -6,7 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import ru.simakover.vkapi.data.repository.NewsFeedRepository
+import ru.simakover.vkapi.data.repository.VkRepository
 import ru.simakover.vkapi.domain.models.FeedPost
 
 class NewsFeedViewModel(application: Application) : AndroidViewModel(application) {
@@ -17,7 +17,7 @@ class NewsFeedViewModel(application: Application) : AndroidViewModel(application
     private val _screenState = MutableLiveData<NewsFeedScreenState>(initialState)
     val screenState: LiveData<NewsFeedScreenState> = _screenState
 
-    private val repository = NewsFeedRepository(application)
+    private val repository = VkRepository(application)
 
     init {
         _screenState.value = NewsFeedScreenState.Loading

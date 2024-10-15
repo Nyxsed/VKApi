@@ -1,32 +1,36 @@
 package ru.simakover.vkapi.presentation.screens.comments
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
+import ru.simakover.vkapi.data.repository.VkRepository
 import ru.simakover.vkapi.domain.models.FeedPost
-import ru.simakover.vkapi.domain.models.PostComment
 
-class CommentsViewModel(
-    feedPost: FeedPost,
-): ViewModel()
+class CommentsViewModel(feedPost: FeedPost, application: Application): AndroidViewModel(application)
  {
 
     private val _screenState =  MutableLiveData<CommentsScreenState>(CommentsScreenState.Initial)
     val screenState: LiveData<CommentsScreenState> = _screenState
+
+     private val repository = VkRepository(application)
 
     init {
         loadComments(feedPost)
     }
 
     private fun loadComments(feedPost: FeedPost) {
-        val comments = mutableListOf<PostComment>().apply {
-            repeat(10) {
-                add(element = PostComment(id = it))
-            }
+        viewModelScope.launch {
+            repository.loadPostComments(
+                ownerId = feedPost.communityId,
+                postId = feedPost.id
+            )
+            _screenState.value = CommentsScreenState.Comments(
+                feedPost = feedPost,
+                postComments = repository.postComments
+            )
         }
-        _screenState.value = CommentsScreenState.Comments(
-            feedPost = feedPost,
-            postComments = comments
-        )
     }
 }
