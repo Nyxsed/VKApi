@@ -1,6 +1,6 @@
 package ru.simakover.vkapi.data.mapper
 
-import ru.simakover.vkapi.data.model.NewsFeedResponseDto
+import ru.simakover.vkapi.data.model.newsfeedresponse.NewsFeedResponseDto
 import ru.simakover.vkapi.domain.models.FeedPost
 import ru.simakover.vkapi.domain.models.StatisticItem
 import ru.simakover.vkapi.domain.models.StatisticType

@@ -2,8 +2,8 @@ package ru.simakover.vkapi.data.network
 
 import retrofit2.http.GET
 import retrofit2.http.Query
-import ru.simakover.vkapi.data.model.LikesCountResponseDto
-import ru.simakover.vkapi.data.model.NewsFeedResponseDto
+import ru.simakover.vkapi.data.model.likescountresponse.LikesCountResponseDto
+import ru.simakover.vkapi.data.model.newsfeedresponse.NewsFeedResponseDto
 
 interface ApiService {
 
