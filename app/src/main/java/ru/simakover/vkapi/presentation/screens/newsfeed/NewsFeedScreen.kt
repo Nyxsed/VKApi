@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
@@ -14,6 +15,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxState
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberSwipeToDismissBoxState
@@ -50,9 +52,16 @@ fun NewsFeedScreen(
             )
         }
 
-        NewsFeedScreenState.Initial -> {
-
+        NewsFeedScreenState.Loading -> {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center,
+            ) {
+                CircularProgressIndicator(color = MaterialTheme.colorScheme.onBackground)
+            }
         }
+
+        NewsFeedScreenState.Initial -> {}
     }
 }
 
@@ -78,13 +87,19 @@ fun FeedPosts(
             items = posts,
             key = { it.id }
         ) { post ->
-            val dismissBoxState = rememberSwipeToDismissBoxState(
-                positionalThreshold = { it * .75f }
+            val threshold = 0.5f
+            lateinit var dismissBoxState: SwipeToDismissBoxState
+            dismissBoxState = rememberSwipeToDismissBoxState(
+                positionalThreshold = { it * threshold },
+                confirmValueChange = {
+                    if (it == SwipeToDismissBoxValue.EndToStart && dismissBoxState.progress > threshold) {
+                        viewModel.deletePost(post)
+                        true
+                    } else {
+                        false
+                    }
+                }
             )
-
-            if (dismissBoxState.currentValue == SwipeToDismissBoxValue.EndToStart) {
-                viewModel.deletePost(post)
-            }
 
             SwipeToDismissBox(
                 modifier = Modifier.animateItemPlacement(),
@@ -113,18 +128,6 @@ fun FeedPosts(
                     onLikeClickListener = {
                         viewModel.changeLikeStatus(post = post)
                     },
-                    onShareClickListener = { statisticItem ->
-                        viewModel.updateCount(
-                            feedPost = post,
-                            item = statisticItem
-                        )
-                    },
-                    onViewsClickListener = { statisticItem ->
-                        viewModel.updateCount(
-                            feedPost = post,
-                            item = statisticItem
-                        )
-                    },
                     onCommentClickListener = { statisticItem ->
                         onCommentClickListener(post)
                     },
@@ -135,7 +138,7 @@ fun FeedPosts(
             if (nextDataIsLoading) {
                 Box(
                     modifier = Modifier
-                        .fillParentMaxWidth()
+                        .fillMaxWidth()
                         .wrapContentHeight()
                         .padding(16.dp),
                     contentAlignment = Alignment.Center,

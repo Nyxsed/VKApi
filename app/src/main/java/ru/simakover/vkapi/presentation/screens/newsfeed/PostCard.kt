@@ -25,7 +25,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import ru.simakover.vkapi.R
@@ -42,8 +41,6 @@ fun PostCard(
     modifier: Modifier = Modifier,
     post: FeedPost,
     onLikeClickListener: (StatisticItem) -> Unit,
-    onShareClickListener: (StatisticItem) -> Unit,
-    onViewsClickListener: (StatisticItem) -> Unit,
     onCommentClickListener: (StatisticItem) -> Unit,
 ) {
     Card(
@@ -65,8 +62,6 @@ fun PostCard(
             Statistics(
                 statistics = post.statistics,
                 onLikeClickListener = onLikeClickListener,
-                onShareClickListener = onShareClickListener,
-                onViewsClickListener = onViewsClickListener,
                 onCommentClickListener = onCommentClickListener,
                 isLiked = post.isLiked
             )
@@ -123,8 +118,6 @@ private fun PostHeader(
 private fun Statistics(
     statistics: List<StatisticItem>,
     onLikeClickListener: (StatisticItem) -> Unit,
-    onShareClickListener: (StatisticItem) -> Unit,
-    onViewsClickListener: (StatisticItem) -> Unit,
     onCommentClickListener: (StatisticItem) -> Unit,
     isLiked: Boolean,
 ) {
@@ -140,9 +133,6 @@ private fun Statistics(
             IconWithText(
                 iconResId = R.drawable.ic_eye,
                 text = viewsItem.count.toString(),
-                onItemClickListener = {
-                    onViewsClickListener(viewsItem)
-                },
                 revers = false
             )
         }
@@ -153,9 +143,6 @@ private fun Statistics(
             IconWithText(
                 iconResId = R.drawable.ic_arrow,
                 text = sharesItem.count.toString(),
-                onItemClickListener = {
-                    onShareClickListener(sharesItem)
-                },
             )
             Spacer(modifier = Modifier.width(12.dp))
             val commentItem = statistics.getItemByType(StatisticType.COMMENTS)
@@ -191,15 +178,19 @@ private fun List<StatisticItem>.getItemByType(type: StatisticType): StatisticIte
 private fun IconWithText(
     iconResId: Int,
     text: String,
-    onItemClickListener: () -> Unit,
+    onItemClickListener: (() -> Unit)? = null,
     revers: Boolean = true,
     tintForIcon: Color = MaterialTheme.colorScheme.onSecondary,
 ) {
+
+    val modifier = if (onItemClickListener == null) {
+        Modifier
+    } else {
+        Modifier.clickable { onItemClickListener() }
+    }
+
     Row(
-        modifier = Modifier
-            .clickable {
-                onItemClickListener()
-            },
+        modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
         if (revers) {
@@ -247,22 +238,4 @@ private fun formatStatisticCount(count: String): String {
     } else {
         longCount.toString()
     }
-}
-
-@Preview
-@Composable
-private fun PostCardPreview() {
-    Statistics(
-        statistics = listOf(
-            StatisticItem(StatisticType.VIEWS,100000),
-            StatisticItem(StatisticType.SHARES,100000),
-            StatisticItem(StatisticType.COMMENTS,100000),
-            StatisticItem(StatisticType.LIKES,100000),
-        ),
-        onLikeClickListener = {},
-        onShareClickListener = {},
-        onViewsClickListener = {},
-        onCommentClickListener = {},
-        isLiked = true
-    )
 }

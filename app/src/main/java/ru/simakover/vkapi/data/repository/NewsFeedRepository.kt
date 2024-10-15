@@ -75,4 +75,13 @@ class NewsFeedRepository(application: Application) {
 
         _feedPosts[postIndex] = newPost
     }
+
+    suspend fun ignoreRecommendation(post: FeedPost) {
+        apiService.ignoreRecommendation(
+            token = getAccessToken(),
+            ownerId = post.communityId,
+            postId = post.id
+        )
+        _feedPosts.remove(post)
+    }
 }
