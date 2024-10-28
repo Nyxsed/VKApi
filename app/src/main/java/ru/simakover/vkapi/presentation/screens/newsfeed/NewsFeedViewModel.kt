@@ -2,56 +2,50 @@ package ru.simakover.vkapi.presentation.screens.newsfeed
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import ru.simakover.vkapi.data.repository.VkRepository
 import ru.simakover.vkapi.domain.models.FeedPost
+import ru.simakover.vkapi.presentation.util.Util.mergeWith
 
 class NewsFeedViewModel(application: Application) : AndroidViewModel(application) {
 
-
-    private val initialState = NewsFeedScreenState.Initial
-
-    private val _screenState = MutableLiveData<NewsFeedScreenState>(initialState)
-    val screenState: LiveData<NewsFeedScreenState> = _screenState
-
     private val repository = VkRepository(application)
 
-    init {
-        _screenState.value = NewsFeedScreenState.Loading
-        loadRecommendations()
-    }
+    private val recommendationsFlow = repository.recommendations
+    private val loadNextDataFlow = MutableSharedFlow<NewsFeedScreenState>()
 
-    private fun loadRecommendations() {
-        viewModelScope.launch {
-            val feedPosts = repository.loadRecommendations()
-            _screenState.value = NewsFeedScreenState.Posts(posts = feedPosts, nextDataIsLoading = false)
-        }
-    }
+    val screenState = recommendationsFlow
+        .filter { it.isNotEmpty() }
+        .map { NewsFeedScreenState.Posts(posts = it) as NewsFeedScreenState }
+        .onStart { emit(NewsFeedScreenState.Loading) }
+        .mergeWith(loadNextDataFlow)
 
     fun loadNextRecommendations() {
         viewModelScope.launch {
-            _screenState.value = NewsFeedScreenState.Posts(
-                posts = repository.feedPosts,
-                nextDataIsLoading = true
+            loadNextDataFlow.emit(
+                NewsFeedScreenState.Posts(
+                    posts = recommendationsFlow.value,
+                    nextDataIsLoading = true
+                )
             )
-            loadRecommendations()
+            repository.loadNextData()
         }
     }
 
     fun changeLikeStatus(post: FeedPost) {
         viewModelScope.launch {
             repository.changeLikeStatus(post)
-            _screenState.value = NewsFeedScreenState.Posts(posts = repository.feedPosts)
         }
     }
 
     fun deletePost(post: FeedPost) {
         viewModelScope.launch {
             repository.ignoreRecommendation(post)
-            _screenState.value = NewsFeedScreenState.Posts(posts = repository.feedPosts)
         }
     }
 }

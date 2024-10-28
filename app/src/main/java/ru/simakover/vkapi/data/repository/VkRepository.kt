@@ -3,12 +3,20 @@ package ru.simakover.vkapi.data.repository
 import android.app.Application
 import com.vk.api.sdk.VKPreferencesKeyValueStorage
 import com.vk.api.sdk.auth.VKAccessToken
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.stateIn
 import ru.simakover.vkapi.data.mapper.VkMapper
 import ru.simakover.vkapi.data.network.ApiFactory
 import ru.simakover.vkapi.domain.models.FeedPost
 import ru.simakover.vkapi.domain.models.PostComment
 import ru.simakover.vkapi.domain.models.StatisticItem
 import ru.simakover.vkapi.domain.models.StatisticType
+import ru.simakover.vkapi.presentation.util.Util.mergeWith
 
 class VkRepository(application: Application) {
 
@@ -19,7 +27,7 @@ class VkRepository(application: Application) {
     private val mapper = VkMapper()
 
     private val _feedPosts = mutableListOf<FeedPost>()
-    val feedPosts: List<FeedPost>
+    private val feedPosts: List<FeedPost>
         get() = _feedPosts.toList()
 
     private var nextFrom: String? = null
@@ -28,22 +36,43 @@ class VkRepository(application: Application) {
         return token?.accessToken ?: throw IllegalStateException("Token is null")
     }
 
-    suspend fun loadRecommendations(): List<FeedPost> {
-        val startFrom = nextFrom
+    private val scope = CoroutineScope(Dispatchers.Default)
+    private val nextDataNeededEvents = MutableSharedFlow<Unit>(replay = 1)
+    private val refreshedListFlow = MutableSharedFlow<List<FeedPost>>()
+    private val loadedListFlow = flow {
+        nextDataNeededEvents.emit(Unit)
+        nextDataNeededEvents.collect {
+            val startFrom = nextFrom
 
-        if (startFrom == null && feedPosts.isNotEmpty()) return feedPosts
+            if (startFrom == null && feedPosts.isNotEmpty()) {
+                emit(feedPosts)
+                return@collect
+            }
 
-        val response = if (startFrom == null) {
-            apiService.loadRecommendations(getAccessToken())
-        } else {
-            apiService.loadRecommendations(getAccessToken(), startFrom)
+            val response = if (startFrom == null) {
+                apiService.loadRecommendations(getAccessToken())
+            } else {
+                apiService.loadRecommendations(getAccessToken(), startFrom)
+            }
+
+            nextFrom = response.newsFeedContent.nextFrom
+
+            val posts = mapper.mapResponseToPosts(response)
+            _feedPosts.addAll(posts)
+            emit(feedPosts)
         }
+    }
 
-        nextFrom = response.newsFeedContent.nextFrom
+    val recommendations: StateFlow<List<FeedPost>> = loadedListFlow
+        .mergeWith(refreshedListFlow)
+        .stateIn(
+            scope = scope,
+            started = SharingStarted.Lazily,
+            initialValue = feedPosts
+        )
 
-        val posts = mapper.mapResponseToPosts(response)
-        _feedPosts.addAll(posts)
-        return feedPosts
+    suspend fun loadNextData() {
+        nextDataNeededEvents.emit(Unit)
     }
 
     suspend fun changeLikeStatus(post: FeedPost) {
@@ -75,6 +104,7 @@ class VkRepository(application: Application) {
         val postIndex = _feedPosts.indexOf(post)
 
         _feedPosts[postIndex] = newPost
+        refreshedListFlow.emit(feedPosts)
     }
 
     suspend fun ignoreRecommendation(post: FeedPost) {
@@ -84,6 +114,7 @@ class VkRepository(application: Application) {
             postId = post.id
         )
         _feedPosts.remove(post)
+        refreshedListFlow.emit(feedPosts)
     }
 
     private val _postComments = mutableListOf<PostComment>()
