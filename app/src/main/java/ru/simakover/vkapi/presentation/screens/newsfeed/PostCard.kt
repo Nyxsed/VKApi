@@ -28,9 +28,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import ru.simakover.vkapi.R
-import ru.simakover.vkapi.domain.models.FeedPost
-import ru.simakover.vkapi.domain.models.StatisticItem
-import ru.simakover.vkapi.domain.models.StatisticType
+import ru.simakover.vkapi.domain.entity.FeedPost
+import ru.simakover.vkapi.domain.entity.StatisticItem
+import ru.simakover.vkapi.domain.entity.StatisticType
 import ru.simakover.vkapi.presentation.ui.theme.likedHeart
 import ru.simakover.vkapi.presentation.util.Util.mapTimestampToDate
 

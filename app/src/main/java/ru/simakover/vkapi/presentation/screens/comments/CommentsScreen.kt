@@ -32,8 +32,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
-import ru.simakover.vkapi.domain.models.FeedPost
-import ru.simakover.vkapi.domain.models.PostComment
+import ru.simakover.vkapi.domain.entity.FeedPost
+import ru.simakover.vkapi.domain.entity.PostComment
 import ru.simakover.vkapi.presentation.util.Util.mapTimestampToDate
 
 @OptIn(ExperimentalMaterial3Api::class)

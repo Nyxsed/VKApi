@@ -6,7 +6,6 @@ import com.vk.api.sdk.auth.VKAccessToken
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -15,14 +14,15 @@ import kotlinx.coroutines.flow.retry
 import kotlinx.coroutines.flow.stateIn
 import ru.simakover.vkapi.data.mapper.VkMapper
 import ru.simakover.vkapi.data.network.ApiFactory
-import ru.simakover.vkapi.domain.models.AuthState
-import ru.simakover.vkapi.domain.models.FeedPost
-import ru.simakover.vkapi.domain.models.PostComment
-import ru.simakover.vkapi.domain.models.StatisticItem
-import ru.simakover.vkapi.domain.models.StatisticType
+import ru.simakover.vkapi.domain.entity.AuthState
+import ru.simakover.vkapi.domain.entity.FeedPost
+import ru.simakover.vkapi.domain.entity.PostComment
+import ru.simakover.vkapi.domain.entity.StatisticItem
+import ru.simakover.vkapi.domain.entity.StatisticType
+import ru.simakover.vkapi.domain.repository.VkRepository
 import ru.simakover.vkapi.presentation.util.Util.mergeWith
 
-class VkRepository(application: Application) {
+class VkRepositoryImpl(application: Application): VkRepository {
 
     private val storage = VKPreferencesKeyValueStorage(application)
     private val token
@@ -71,7 +71,7 @@ class VkRepository(application: Application) {
         true
     }
 
-    val recommendations: StateFlow<List<FeedPost>> = loadedListFlow
+    private val recommendations: StateFlow<List<FeedPost>> = loadedListFlow
         .mergeWith(refreshedListFlow)
         .stateIn(
             scope = scope,
@@ -79,11 +79,11 @@ class VkRepository(application: Application) {
             initialValue = feedPosts
         )
 
-    suspend fun loadNextData() {
+    override suspend fun loadNextData() {
         nextDataNeededEvents.emit(Unit)
     }
 
-    suspend fun changeLikeStatus(post: FeedPost) {
+    override suspend fun changeLikeStatus(post: FeedPost) {
         val response = if (!post.isLiked) {
             apiService.addLike(
                 token = getAccessToken(),
@@ -115,7 +115,7 @@ class VkRepository(application: Application) {
         refreshedListFlow.emit(feedPosts)
     }
 
-    suspend fun deletePost(post: FeedPost) {
+    override suspend fun deletePost(post: FeedPost) {
         apiService.ignoreRecommendation(
             token = getAccessToken(),
             ownerId = post.communityId,
@@ -125,7 +125,7 @@ class VkRepository(application: Application) {
         refreshedListFlow.emit(feedPosts)
     }
 
-    fun commentsFlow(feedPost: FeedPost): Flow<List<PostComment>> = flow {
+    override fun getComments(feedPost: FeedPost): StateFlow<List<PostComment>> = flow {
         val ownerId = feedPost.communityId
         val postId = feedPost.id
 
@@ -138,11 +138,15 @@ class VkRepository(application: Application) {
     }.retry {
         delay(RETRY_TIMEOUT)
         true
-    }
+    }.stateIn(
+        scope = scope,
+        started = SharingStarted.Lazily,
+        initialValue = listOf()
+    )
 
     private val checkAuthStateEvents = MutableSharedFlow<Unit>(replay = 1)
 
-    val authStateFlow = flow {
+    private val authStateFlow = flow {
         checkAuthStateEvents.emit(Unit)
         checkAuthStateEvents.collect {
             val currentToken = token
@@ -156,10 +160,13 @@ class VkRepository(application: Application) {
         initialValue = AuthState.Initial
     )
 
-    suspend fun checkAuthState() {
+    override suspend fun checkAuthState() {
         checkAuthStateEvents.emit(Unit)
     }
 
+    override fun getAuthStateFlow(): StateFlow<AuthState>  = authStateFlow
+
+    override fun getRecommendations(): StateFlow<List<FeedPost>> = recommendations
 
     companion object {
         const val RETRY_TIMEOUT = 3000L

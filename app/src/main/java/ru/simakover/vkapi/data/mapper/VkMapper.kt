@@ -2,10 +2,10 @@ package ru.simakover.vkapi.data.mapper
 
 import ru.simakover.vkapi.data.model.commentsresponse.CommentsResponseDto
 import ru.simakover.vkapi.data.model.newsfeedresponse.NewsFeedResponseDto
-import ru.simakover.vkapi.domain.models.FeedPost
-import ru.simakover.vkapi.domain.models.PostComment
-import ru.simakover.vkapi.domain.models.StatisticItem
-import ru.simakover.vkapi.domain.models.StatisticType
+import ru.simakover.vkapi.domain.entity.FeedPost
+import ru.simakover.vkapi.domain.entity.PostComment
+import ru.simakover.vkapi.domain.entity.StatisticItem
+import ru.simakover.vkapi.domain.entity.StatisticType
 import kotlin.math.absoluteValue
 
 class VkMapper {

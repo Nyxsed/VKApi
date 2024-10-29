@@ -1,6 +1,6 @@
 package ru.simakover.vkapi.presentation.screens.newsfeed
 
-import ru.simakover.vkapi.domain.models.FeedPost
+import ru.simakover.vkapi.domain.entity.FeedPost
 
 sealed class NewsFeedScreenState {
 

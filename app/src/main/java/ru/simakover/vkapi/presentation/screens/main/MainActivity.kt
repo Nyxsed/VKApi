@@ -8,7 +8,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.vk.api.sdk.VK
 import com.vk.api.sdk.auth.VKScope
-import ru.simakover.vkapi.domain.models.AuthState
+import ru.simakover.vkapi.domain.entity.AuthState
 import ru.simakover.vkapi.presentation.ui.theme.VKApiTheme
 
 class MainActivity : ComponentActivity() {

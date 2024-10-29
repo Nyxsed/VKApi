@@ -28,7 +28,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import ru.simakover.vkapi.domain.models.FeedPost
+import ru.simakover.vkapi.domain.entity.FeedPost
 
 
 @Composable

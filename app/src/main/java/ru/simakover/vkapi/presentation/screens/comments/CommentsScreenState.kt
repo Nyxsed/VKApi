@@ -1,7 +1,7 @@
 package ru.simakover.vkapi.presentation.screens.comments
 
-import ru.simakover.vkapi.domain.models.FeedPost
-import ru.simakover.vkapi.domain.models.PostComment
+import ru.simakover.vkapi.domain.entity.FeedPost
+import ru.simakover.vkapi.domain.entity.PostComment
 
 sealed class CommentsScreenState {
 

@@ -2,7 +2,7 @@ package ru.simakover.vkapi.navigation
 
 import android.net.Uri
 import com.google.gson.Gson
-import ru.simakover.vkapi.domain.models.FeedPost
+import ru.simakover.vkapi.domain.entity.FeedPost
 
 sealed class Screen(
     val route: String,

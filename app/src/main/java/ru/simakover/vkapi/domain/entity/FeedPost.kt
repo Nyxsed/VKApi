@@ -1,4 +1,4 @@
-package ru.simakover.vkapi.domain.models
+package ru.simakover.vkapi.domain.entity
 
 data class FeedPost(
     val id: Long,
