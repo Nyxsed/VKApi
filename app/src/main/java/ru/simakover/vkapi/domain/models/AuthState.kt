@@ -1,4 +1,4 @@
-package ru.simakover.vkapi.presentation.screens.main
+package ru.simakover.vkapi.domain.models
 
 sealed class AuthState {
 

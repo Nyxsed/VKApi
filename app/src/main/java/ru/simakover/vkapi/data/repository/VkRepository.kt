@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.retry
 import kotlinx.coroutines.flow.stateIn
 import ru.simakover.vkapi.data.mapper.VkMapper
 import ru.simakover.vkapi.data.network.ApiFactory
+import ru.simakover.vkapi.domain.models.AuthState
 import ru.simakover.vkapi.domain.models.FeedPost
 import ru.simakover.vkapi.domain.models.PostComment
 import ru.simakover.vkapi.domain.models.StatisticItem
@@ -24,7 +25,8 @@ import ru.simakover.vkapi.presentation.util.Util.mergeWith
 class VkRepository(application: Application) {
 
     private val storage = VKPreferencesKeyValueStorage(application)
-    private val token = VKAccessToken.restore(storage)
+    private val token
+        get() = VKAccessToken.restore(storage)
 
     private val apiService = ApiFactory.apiService
     private val mapper = VkMapper()
@@ -137,6 +139,27 @@ class VkRepository(application: Application) {
         delay(RETRY_TIMEOUT)
         true
     }
+
+    private val checkAuthStateEvents = MutableSharedFlow<Unit>(replay = 1)
+
+    val authStateFlow = flow {
+        checkAuthStateEvents.emit(Unit)
+        checkAuthStateEvents.collect {
+            val currentToken = token
+            val loggedIn = currentToken != null && currentToken.isValid
+            val authState = if (loggedIn) AuthState.Authorized else AuthState.NotAuthorized
+            emit(authState)
+        }
+    }.stateIn(
+        scope = scope,
+        started = SharingStarted.Lazily,
+        initialValue = AuthState.Initial
+    )
+
+    suspend fun checkAuthState() {
+        checkAuthStateEvents.emit(Unit)
+    }
+
 
     companion object {
         const val RETRY_TIMEOUT = 3000L
