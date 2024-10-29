@@ -5,10 +5,13 @@ import com.vk.api.sdk.VKPreferencesKeyValueStorage
 import com.vk.api.sdk.auth.VKAccessToken
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.retry
 import kotlinx.coroutines.flow.stateIn
 import ru.simakover.vkapi.data.mapper.VkMapper
 import ru.simakover.vkapi.data.network.ApiFactory
@@ -61,6 +64,9 @@ class VkRepository(application: Application) {
             _feedPosts.addAll(posts)
             emit(feedPosts)
         }
+    }.retry {
+        delay(RETRY_TIMEOUT)
+        true
     }
 
     val recommendations: StateFlow<List<FeedPost>> = loadedListFlow
@@ -107,7 +113,7 @@ class VkRepository(application: Application) {
         refreshedListFlow.emit(feedPosts)
     }
 
-    suspend fun ignoreRecommendation(post: FeedPost) {
+    suspend fun deletePost(post: FeedPost) {
         apiService.ignoreRecommendation(
             token = getAccessToken(),
             ownerId = post.communityId,
@@ -117,20 +123,22 @@ class VkRepository(application: Application) {
         refreshedListFlow.emit(feedPosts)
     }
 
-    private val _postComments = mutableListOf<PostComment>()
-    val postComments: List<PostComment>
-        get() = _postComments.toList()
-
-    suspend fun loadPostComments(ownerId: Long, postId: Long): List<PostComment> {
+    fun commentsFlow(feedPost: FeedPost): Flow<List<PostComment>> = flow {
+        val ownerId = feedPost.communityId
+        val postId = feedPost.id
 
         val response = apiService.loadComments(
             token = getAccessToken(),
             ownerId = ownerId,
             postId = postId
         )
+        emit(mapper.mapResponseToComments(response))
+    }.retry {
+        delay(RETRY_TIMEOUT)
+        true
+    }
 
-        val comments = mapper.mapResponseToComments(response)
-        _postComments.addAll(comments)
-        return postComments
+    companion object {
+        const val RETRY_TIMEOUT = 3000L
     }
 }

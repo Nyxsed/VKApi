@@ -8,12 +8,12 @@ import ru.simakover.vkapi.data.model.newsfeedresponse.NewsFeedResponseDto
 
 interface ApiService {
 
-    @GET("newsfeed.getRecommended?v=5.199&count=5")
+    @GET("newsfeed.getRecommended?v=5.199")
     suspend fun loadRecommendations(
         @Query("access_token") token: String,
     ): NewsFeedResponseDto
 
-    @GET("newsfeed.getRecommended?v=5.199&count=5")
+    @GET("newsfeed.getRecommended?v=5.199")
     suspend fun loadRecommendations(
         @Query("access_token") token: String,
         @Query("start_from") startFrom: String,
