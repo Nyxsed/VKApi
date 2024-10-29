@@ -74,4 +74,10 @@ dependencies {
 //    implementation(libs.retrofit)
     implementation(libs.logging.interceptor)
     implementation(libs.converter.gson)
+
+    implementation("io.insert-koin:koin-android:4.0.0")
+    implementation("io.insert-koin:koin-androidx-navigation:4.0.0")
+    implementation("io.insert-koin:koin-androidx-compose:4.0.0")
+    implementation("io.insert-koin:koin-compose-viewmodel:4.0.0")
+    implementation("io.insert-koin:koin-compose-viewmodel-navigation:4.0.0")
 }

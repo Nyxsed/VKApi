@@ -76,7 +76,7 @@ fun MainScreen() {
                     modifier = Modifier
                         .padding(paddings),
                     onCommentClickListener = { feedPost ->
-                    navigationState.navigateToComments(feedPost)
+                        navigationState.navigateToComments(feedPost)
                     }
                 )
             },

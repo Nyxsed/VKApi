@@ -1,7 +1,6 @@
 package ru.simakover.vkapi.data.repository
 
-import android.app.Application
-import com.vk.api.sdk.VKPreferencesKeyValueStorage
+import com.vk.api.sdk.VKKeyValueStorage
 import com.vk.api.sdk.auth.VKAccessToken
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -13,7 +12,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.retry
 import kotlinx.coroutines.flow.stateIn
 import ru.simakover.vkapi.data.mapper.VkMapper
-import ru.simakover.vkapi.data.network.ApiFactory
+import ru.simakover.vkapi.data.network.ApiService
 import ru.simakover.vkapi.domain.entity.AuthState
 import ru.simakover.vkapi.domain.entity.FeedPost
 import ru.simakover.vkapi.domain.entity.PostComment
@@ -22,14 +21,14 @@ import ru.simakover.vkapi.domain.entity.StatisticType
 import ru.simakover.vkapi.domain.repository.VkRepository
 import ru.simakover.vkapi.presentation.util.Util.mergeWith
 
-class VkRepositoryImpl(application: Application): VkRepository {
+class VkRepositoryImpl(
+    private val apiService: ApiService,
+    private val mapper: VkMapper,
+    private val storage: VKKeyValueStorage,
+) : VkRepository {
 
-    private val storage = VKPreferencesKeyValueStorage(application)
     private val token
         get() = VKAccessToken.restore(storage)
-
-    private val apiService = ApiFactory.apiService
-    private val mapper = VkMapper()
 
     private val _feedPosts = mutableListOf<FeedPost>()
     private val feedPosts: List<FeedPost>
@@ -67,7 +66,7 @@ class VkRepositoryImpl(application: Application): VkRepository {
             emit(feedPosts)
         }
     }.retry {
-        delay(RETRY_TIMEOUT)
+        delay(3000L)
         true
     }
 
@@ -136,7 +135,7 @@ class VkRepositoryImpl(application: Application): VkRepository {
         )
         emit(mapper.mapResponseToComments(response))
     }.retry {
-        delay(RETRY_TIMEOUT)
+        delay(3000L)
         true
     }.stateIn(
         scope = scope,
@@ -164,11 +163,7 @@ class VkRepositoryImpl(application: Application): VkRepository {
         checkAuthStateEvents.emit(Unit)
     }
 
-    override fun getAuthStateFlow(): StateFlow<AuthState>  = authStateFlow
+    override fun getAuthStateFlow(): StateFlow<AuthState> = authStateFlow
 
     override fun getRecommendations(): StateFlow<List<FeedPost>> = recommendations
-
-    companion object {
-        const val RETRY_TIMEOUT = 3000L
-    }
 }

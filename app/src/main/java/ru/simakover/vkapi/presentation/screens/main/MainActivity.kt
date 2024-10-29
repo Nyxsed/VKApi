@@ -5,9 +5,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.collectAsState
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.vk.api.sdk.VK
 import com.vk.api.sdk.auth.VKScope
+import org.koin.androidx.compose.koinViewModel
 import ru.simakover.vkapi.domain.entity.AuthState
 import ru.simakover.vkapi.presentation.ui.theme.VKApiTheme
 
@@ -18,7 +18,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             VKApiTheme {
-                val viewModel: MainViewModel = viewModel()
+                val viewModel = koinViewModel<MainViewModel>()
                 val authState = viewModel.authState.collectAsState(AuthState.Initial)
 
                 val launcher = rememberLauncherForActivityResult(

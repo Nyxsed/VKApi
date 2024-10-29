@@ -1,6 +1,5 @@
 package ru.simakover.vkapi.presentation.screens.comments
 
-import android.app.Application
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -26,12 +25,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
 import ru.simakover.vkapi.domain.entity.FeedPost
 import ru.simakover.vkapi.domain.entity.PostComment
 import ru.simakover.vkapi.presentation.util.Util.mapTimestampToDate
@@ -42,12 +41,7 @@ fun CommentsScreen(
     onBackPressed: () -> Unit,
     feedPost: FeedPost,
 ) {
-    val viewModel: CommentsViewModel = viewModel(
-        factory = CommentsViewModelFactory(
-            feedPost = feedPost,
-            application = LocalContext.current.applicationContext as Application
-        )
-    )
+    val viewModel = koinViewModel<CommentsViewModel> { parametersOf(feedPost) }
 
     val screenState = viewModel.screenState.collectAsState(initial = CommentsScreenState.Initial)
     val currentState = screenState.value
