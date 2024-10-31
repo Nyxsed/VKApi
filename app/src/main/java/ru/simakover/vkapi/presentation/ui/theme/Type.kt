@@ -1,4 +1,4 @@
-package ru.simakover.vkapi.ui.theme
+package ru.simakover.vkapi.presentation.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">VKApi</string>
+    <string name="lorem">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</string>
+    <string name="navigation_item_main">Главная</string>
+    <string name="navigation_item_favourites">Избранное</string>
+    <string name="navigation_item_profile">Профиль</string>
+    <string name="LogIn">Войти</string>
+    <integer name="com_vk_sdk_AppId">7867126</integer>
 </resources>

@@ -63,4 +63,21 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    implementation(libs.androidx.runtime.livedata)
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.gson)
+    implementation(libs.coil.compose)
+    implementation(libs.android.sdk.core)
+    implementation(libs.android.sdk.api)
+//    implementation(libs.retrofit)
+    implementation(libs.logging.interceptor)
+    implementation(libs.converter.gson)
+
+    implementation("io.insert-koin:koin-android:4.0.0")
+    implementation("io.insert-koin:koin-androidx-navigation:4.0.0")
+    implementation("io.insert-koin:koin-androidx-compose:4.0.0")
+    implementation("io.insert-koin:koin-compose-viewmodel:4.0.0")
+    implementation("io.insert-koin:koin-compose-viewmodel-navigation:4.0.0")
 }
