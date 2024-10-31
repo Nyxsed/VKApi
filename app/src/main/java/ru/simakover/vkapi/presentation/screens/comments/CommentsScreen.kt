@@ -22,6 +22,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,17 +36,26 @@ import ru.simakover.vkapi.domain.entity.FeedPost
 import ru.simakover.vkapi.domain.entity.PostComment
 import ru.simakover.vkapi.presentation.util.Util.mapTimestampToDate
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CommentsScreen(
     onBackPressed: () -> Unit,
     feedPost: FeedPost,
 ) {
     val viewModel = koinViewModel<CommentsViewModel> { parametersOf(feedPost) }
-
     val screenState = viewModel.screenState.collectAsState(initial = CommentsScreenState.Initial)
-    val currentState = screenState.value
+    CommentScreenContent(
+        screenState = screenState,
+        onBackPressed = onBackPressed
+    )
+}
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CommentScreenContent(
+    screenState: State<CommentsScreenState>,
+    onBackPressed: () -> Unit,
+) {
+    val currentState = screenState.value
     if (currentState is CommentsScreenState.Comments) {
         Scaffold(
             topBar = {

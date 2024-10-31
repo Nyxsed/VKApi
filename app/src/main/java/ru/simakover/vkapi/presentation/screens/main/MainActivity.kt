@@ -15,18 +15,16 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContent {
+            val viewModel = koinViewModel<MainViewModel>()
+            val authState = viewModel.authState.collectAsState(AuthState.Initial)
+
+            val launcher = rememberLauncherForActivityResult(
+                contract = VK.getVKAuthActivityResultContract()
+            ) {
+                viewModel.performAuthResult()
+            }
             VKApiTheme {
-                val viewModel = koinViewModel<MainViewModel>()
-                val authState = viewModel.authState.collectAsState(AuthState.Initial)
-
-                val launcher = rememberLauncherForActivityResult(
-                    contract = VK.getVKAuthActivityResultContract()
-                ) {
-                    viewModel.performAuthResult()
-                }
-
                 when (authState.value) {
                     is AuthState.Authorized -> {
                         MainScreen()

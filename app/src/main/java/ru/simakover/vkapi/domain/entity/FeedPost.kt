@@ -1,5 +1,8 @@
 package ru.simakover.vkapi.domain.entity
 
+import androidx.compose.runtime.Immutable
+
+@Immutable
 data class FeedPost(
     val id: Long,
     val communityName: String,

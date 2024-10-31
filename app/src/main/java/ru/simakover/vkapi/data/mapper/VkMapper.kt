@@ -30,7 +30,7 @@ class VkMapper {
                 publicationDate = post.date * 1000,
                 communityImageUrl = group.imageUrl,
                 contentText = post.text,
-                contentImageUrl = post.attachment?.firstOrNull()?.photo?.photoUrls?.lastOrNull()?.url,
+                contentImageUrl = post.attachment?.firstOrNull()?.photo?.photoUrls?.find{ it.type == "p" }?.url,
                 isLiked = post.likes.userLikes > 0,
                 statistics = listOf(
                     StatisticItem(type = StatisticType.LIKES, post.likes.count),
